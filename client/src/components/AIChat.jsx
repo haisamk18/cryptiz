@@ -1,13 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
+import { Bot } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function AIChat({
     riskScore
 }) {
+
     const [response, setResponse] =
         useState("");
 
     async function askAI() {
+
         try {
 
             const result =
@@ -29,38 +33,92 @@ export default function AIChat({
             );
 
         }
+
     }
 
     return (
 
-        <div className="bg-[#151515] p-6 rounded-xl">
+        <motion.div
+            initial={{
+                opacity: 0,
+                y: 30
+            }}
+            animate={{
+                opacity: 1,
+                y: 0
+            }}
+            className="
+                bg-[#111111]/70
+                backdrop-blur-xl
+                border
+                border-cyan-500/20
+                rounded-3xl
+                p-6
+            "
+        >
 
-            <h3 className="text-xl font-bold mb-4">
+            <div
+                className="
+                    flex
+                    items-center
+                    gap-3
+                    mb-5
+                "
+            >
 
-                AI Security Assistant
+                <Bot
+                    className="
+                        text-cyan-400
+                    "
+                />
 
-            </h3>
+                <h2
+                    className="
+                        text-xl
+                        font-bold
+                    "
+                >
+                    AI Security Assistant
+                </h2>
+
+            </div>
 
             <button
                 onClick={askAI}
-                className="bg-blue-600 px-4 py-2 rounded"
+                className="
+                    w-full
+                    py-3
+                    rounded-xl
+                    bg-gradient-to-r
+                    from-purple-600
+                    to-cyan-500
+                    font-semibold
+                "
             >
-                Analyze Wallet
+                Analyze Wallet Risk
             </button>
 
             {
                 response && (
 
-                    <div className="mt-5 p-4 bg-[#222] rounded">
-
+                    <div
+                        className="
+                            mt-5
+                            bg-black/40
+                            p-4
+                            rounded-xl
+                            border
+                            border-cyan-500/20
+                        "
+                    >
                         {response}
-
                     </div>
 
                 )
             }
 
-        </div>
+        </motion.div>
 
     );
+
 }

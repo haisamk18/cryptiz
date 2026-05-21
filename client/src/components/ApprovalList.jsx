@@ -1,15 +1,49 @@
+import { motion } from "framer-motion";
+import { ShieldAlert } from "lucide-react";
+
 export default function ApprovalList({
     approvals
 }) {
+
     return (
 
-        <div className="bg-[#151515] p-6 rounded-xl">
+        <motion.div
+            initial={{
+                opacity: 0,
+                x: 30
+            }}
+            animate={{
+                opacity: 1,
+                x: 0
+            }}
+            className="
+                bg-[#111111]/70
+                backdrop-blur-xl
+                border
+                border-red-500/20
+                rounded-3xl
+                p-6
+            "
+        >
 
-            <h3 className="text-xl font-bold mb-5">
+            <div className="flex gap-3 mb-6">
 
-                Active Approvals
+                <ShieldAlert
+                    className="
+                        text-red-400
+                    "
+                />
 
-            </h3>
+                <h2
+                    className="
+                        text-xl
+                        font-bold
+                    "
+                >
+                    Active Approvals
+                </h2>
+
+            </div>
 
             {
                 approvals.map(
@@ -18,57 +52,78 @@ export default function ApprovalList({
                         index
                     ) => (
 
-                        <div
+                        <motion.div
                             key={index}
-                            className="border-b border-gray-700 py-4"
+                            whileHover={{
+                                y: -3
+                            }}
+                            className="
+                                bg-black/40
+                                rounded-xl
+                                p-4
+                                mb-4
+                                border
+                                border-white/5
+                            "
                         >
 
-                            <p className="font-semibold">
-
-                                {approval.token}
-
-                            </p>
-
-                            <p className="text-sm text-gray-400">
-
-                                {approval.contract}
-
-                            </p>
-
-                            <p className="mt-2 text-red-400">
-
-                                Risk:
-                                {" "}
-                                {approval.risk}
-
-                            </p>
-
-                            {
-                                approval.unlimited &&
-                                (
-                                    <p className="text-yellow-500 text-sm">
-
-                                        Unlimited Approval Detected
-
-                                    </p>
-                                )
-                            }
-
-                            <a
-                                href="https://revoke.cash"
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-block mt-3 bg-red-600 px-3 py-2 rounded"
+                            <div
+                                className="
+                                    flex
+                                    justify-between
+                                "
                             >
-                                Revoke
-                            </a>
 
-                        </div>
+                                <div>
+
+                                    <p className="font-semibold">
+                                        {approval.token}
+                                    </p>
+
+                                    <p
+                                        className="
+                                            text-gray-400
+                                            text-sm
+                                        "
+                                    >
+                                        {approval.contract}
+                                    </p>
+
+                                </div>
+
+                                <div
+                                    className="
+                                        text-red-400
+                                    "
+                                >
+                                    {approval.risk}
+                                </div>
+
+                            </div>
+
+                            <button
+                                className="
+                                    mt-4
+                                    w-full
+                                    py-2
+                                    rounded-xl
+                                    bg-gradient-to-r
+                                    from-red-500
+                                    to-orange-500
+                                    font-semibold
+                                "
+                            >
+                                Revoke Approval
+                            </button>
+
+                        </motion.div>
+
                     )
                 )
             }
 
-        </div>
+        </motion.div>
 
     );
+
 }

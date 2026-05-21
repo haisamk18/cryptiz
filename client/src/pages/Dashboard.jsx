@@ -1,42 +1,71 @@
 import { useEffect, useState } from "react";
-import { Shield, Wallet } from "lucide-react";
+import { Wallet, LogOut } from "lucide-react";
+import { motion } from "framer-motion";
 import { ethers } from "ethers";
 import axios from "axios";
 
+import Logo from "../components/Logo";
 import RiskCard from "../components/RiskCard";
 import TokenList from "../components/TokenList";
 import ApprovalList from "../components/ApprovalList";
 import AIChat from "../components/AIChat";
 
 export default function Dashboard() {
-    const [walletAddress, setWalletAddress] = useState("");
-    const [scanData, setScanData] = useState(null);
+
+    const [walletAddress, setWalletAddress] =
+        useState("");
+
+    const [scanData, setScanData] =
+        useState(null);
 
     async function scanWallet(address) {
+
         try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/scan-wallet`,
-                {
-                    walletAddress: address
-                }
+
+            const response =
+                await axios.post(
+                    `${import.meta.env.VITE_API_URL}/scan-wallet`,
+                    {
+                        walletAddress: address
+                    }
+                );
+
+            setScanData(
+                response.data
             );
 
-            setScanData(response.data);
-
         } catch (error) {
-            console.log("Scan error:", error);
+
+            console.log(
+                "Scan error:",
+                error
+            );
+
         }
+
     }
 
     async function connectWallet() {
+
         try {
+
             if (!window.ethereum) {
-                alert("Please install MetaMask");
+
+                alert(
+                    "Please install MetaMask"
+                );
+
                 return;
+
             }
 
             await window.ethereum.request({
-                method: "eth_requestAccounts"
+                method: "wallet_requestPermissions",
+                params: [
+                    {
+                        eth_accounts: {}
+                    }
+                ]
             });
 
             const provider =
@@ -50,26 +79,48 @@ export default function Dashboard() {
             const address =
                 await signer.getAddress();
 
-            setWalletAddress(address);
+            setWalletAddress(
+                address
+            );
 
-            scanWallet(address);
+            scanWallet(
+                address
+            );
 
         } catch (error) {
+
             console.log(error);
+
         }
+
+    }
+
+    function disconnectWallet() {
+
+        setWalletAddress("");
+
+        setScanData(null);
+
     }
 
     useEffect(() => {
+
         async function loadWallet() {
+
             try {
-                if (!window.ethereum) return;
+
+                if (!window.ethereum)
+                    return;
 
                 const accounts =
                     await window.ethereum.request({
                         method: "eth_accounts"
                     });
 
-                if (accounts.length > 0) {
+                if (
+                    accounts.length > 0
+                ) {
+
                     setWalletAddress(
                         accounts[0]
                     );
@@ -77,11 +128,15 @@ export default function Dashboard() {
                     scanWallet(
                         accounts[0]
                     );
+
                 }
 
             } catch (error) {
+
                 console.log(error);
+
             }
+
         }
 
         loadWallet();
@@ -89,134 +144,192 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div className="min-h-screen">
 
-            <nav className="border-b border-gray-800 p-5 flex justify-between items-center">
+        <div
+            className="
+                min-h-screen
+                bg-black
+                text-white
+            "
+        >
 
-                <div className="flex items-center gap-3">
+            <nav
+                className="
+                    flex
+                    justify-between
+                    items-center
+                    px-8
+                    py-5
+                    border-b
+                    border-white/10
+                    backdrop-blur-lg
+                "
+            >
 
-                    <Shield size={28} />
+                <Logo />
 
-                    <h1 className="text-2xl font-bold">
-                        Cryptiz
-                    </h1>
+                <div
+                    className="
+                        flex
+                        items-center
+                        gap-4
+                    "
+                >
+
+                    <button
+                        onClick={connectWallet}
+                        className="
+                            bg-gradient-to-r
+                            from-purple-600
+                            to-cyan-500
+                            px-5
+                            py-3
+                            rounded-full
+                            flex
+                            items-center
+                            gap-2
+                            hover:scale-105
+                            transition
+                        "
+                    >
+
+                        <Wallet size={18} />
+
+                        {
+                            walletAddress
+                            ? `${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`
+                            : "Connect Wallet"
+                        }
+
+                    </button>
+
+                    {
+                        walletAddress && (
+
+                            <button
+                                onClick={disconnectWallet}
+                                className="
+                                    bg-red-500/20
+                                    border
+                                    border-red-500/30
+                                    px-5
+                                    py-3
+                                    rounded-full
+                                    flex
+                                    items-center
+                                    gap-2
+                                    hover:bg-red-500/30
+                                    transition
+                                "
+                            >
+
+                                <LogOut size={18} />
+
+                                Disconnect
+
+                            </button>
+
+                        )
+                    }
 
                 </div>
-
-                <button
-                    onClick={connectWallet}
-                    className="bg-blue-600 px-5 py-2 rounded-lg flex items-center gap-2"
-                >
-                    <Wallet size={18} />
-
-                    {walletAddress
-                        ? `${walletAddress.slice(
-                              0,
-                              6
-                          )}...${walletAddress.slice(-4)}`
-                        : "Connect Wallet"}
-                </button>
 
             </nav>
 
             <div className="p-8">
 
-                <h2 className="text-3xl font-bold mb-8">
-                    Security Dashboard
-                </h2>
+                <motion.h1
+                    initial={{
+                        opacity: 0,
+                        y: 20
+                    }}
+                    animate={{
+                        opacity: 1,
+                        y: 0
+                    }}
+                    className="
+                        text-4xl
+                        font-bold
+                        mb-8
+                    "
+                >
+                    Wallet Security Dashboard
+                </motion.h1>
 
-                {scanData && (
-                    <>
-                        <div className="grid md:grid-cols-4 gap-6">
+                {
+                    !walletAddress && (
 
-                            <RiskCard
-                                title="Risk Score"
-                                value={`${scanData.riskScore}/100`}
-                                color="text-red-500"
-                            />
+                        <div
+                            className="
+                                bg-[#111111]
+                                rounded-3xl
+                                p-12
+                                text-center
+                                border
+                                border-purple-500/20
+                            "
+                        >
 
-                            <RiskCard
-                                title="Assets"
-                                value={scanData.totalAssets}
-                                color="text-green-500"
-                            />
+                            <h2
+                                className="
+                                    text-2xl
+                                    font-bold
+                                "
+                            >
+                                Connect a wallet
+                            </h2>
 
-                            <RiskCard
-                                title="Approvals"
-                                value={scanData.activeApprovals}
-                                color="text-yellow-500"
-                            />
-
-                            <RiskCard
-                                title="Risk Tokens"
-                                value={scanData.riskyTokens.length}
-                                color="text-orange-500"
-                            />
-
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-6 mt-8">
-
-                            <div className="bg-[#151515] p-6 rounded-xl">
-
-                                <h3 className="text-xl font-bold mb-5">
-                                    Suspicious Tokens
-                                </h3>
-
-                                {scanData.riskyTokens.map(
-                                    (token, index) => (
-                                        <div
-                                            key={index}
-                                            className="border-b border-gray-700 py-3"
-                                        >
-                                            <p className="font-semibold">
-                                                {token.token}
-                                            </p>
-
-                                            <p className="text-gray-400 text-sm">
-                                                {token.reason}
-                                            </p>
-                                        </div>
-                                    )
-                                )}
-
-                            </div>
-
-                            <div className="bg-[#151515] p-6 rounded-xl">
-
-                                <h3 className="text-xl font-bold mb-5">
-                                    Risky Contracts
-                                </h3>
-
-                                <div className="border-b border-gray-700 py-3">
-
-                                    <p className="font-semibold">
-                                        UnknownSwap Router
-                                    </p>
-
-                                    <p className="text-red-500">
-                                        High Risk
-                                    </p>
-
-                                </div>
-
-                                <div className="border-b border-gray-700 py-3">
-
-                                    <p className="font-semibold">
-                                        FakeAirdrop Contract
-                                    </p>
-
-                                    <p className="text-red-500">
-                                        Critical
-                                    </p>
-
-                                </div>
-
-                            </div>
+                            <p
+                                className="
+                                    text-gray-400
+                                    mt-3
+                                "
+                            >
+                                Scan your wallet for
+                                approvals, suspicious
+                                tokens and risks.
+                            </p>
 
                         </div>
 
-                        <div className="grid md:grid-cols-2 gap-6 mt-8">
+                    )
+                }
+
+                {
+                    walletAddress &&
+                    scanData && (
+
+                        <>
+
+                            <div className="grid md:grid-cols-4 gap-6">
+
+                                <RiskCard
+                                    title="Risk Score"
+                                    value={`${scanData.riskScore}/100`}
+                                    color="text-red-400"
+                                />
+
+                                <RiskCard
+                                    title="Assets"
+                                    value={scanData.totalAssets}
+                                    color="text-green-400"
+                                />
+
+                                <RiskCard
+                                    title="Approvals"
+                                    value={scanData.activeApprovals}
+                                    color="text-yellow-400"
+                                />
+
+                                <RiskCard
+                                    title="Risk Tokens"
+                                    value={scanData.riskyTokens.length}
+                                    color="text-orange-400"
+                                />
+
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-6 mt-8">
 
                                 <TokenList
                                     tokens={scanData.tokens || []}
@@ -226,20 +339,26 @@ export default function Dashboard() {
                                     approvals={scanData.approvals || []}
                                 />
 
-                                 <AIChat
-                                     riskScore={
-                                                        scanData?.riskScore || 0
-                                                    }
+                            </div>
+
+                            <div className="mt-8">
+
+                                <AIChat
+                                    riskScore={
+                                        scanData.riskScore
+                                    }
                                 />
 
+                            </div>
 
-                        </div>      
+                        </>
 
-                    </>
-                )}
+                    )
+                }
 
             </div>
 
         </div>
     );
+
 }
