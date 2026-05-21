@@ -14,8 +14,18 @@ const provider = new ethers.JsonRpcProvider(
     process.env.ALCHEMY_URL
 );
 
+/* Health route */
+app.get("/", (req, res) => {
+    res.json({
+        status: "running",
+        app: "Cryptiz Backend",
+        message: "Backend deployed successfully"
+    });
+});
+
 app.post("/scan-wallet", async (req, res) => {
     try {
+
         const { walletAddress } = req.body;
 
         const balanceWei =
@@ -34,12 +44,6 @@ app.post("/scan-wallet", async (req, res) => {
                 contract: "UnknownSwap Router",
                 risk: "High",
                 unlimited: true
-            },
-            {
-                token: "UNI",
-                contract: "DEX Aggregator",
-                risk: "Medium",
-                unlimited: false
             }
         ];
 
@@ -67,46 +71,32 @@ app.post("/scan-wallet", async (req, res) => {
         res.status(500).json({
             success: false
         });
+
     }
 });
 
 app.post("/ai-analysis", async (req, res) => {
-    try {
 
-        const { riskScore } =
-            req.body;
+    const { riskScore } = req.body;
 
-        let analysis = "";
+    let answer = "";
 
-        if (riskScore >= 70) {
+    if (riskScore >= 70) {
 
-            analysis =
-                "High wallet risk detected. Unlimited token approvals and suspicious interactions may expose funds to theft.";
+        answer =
+            "High risk detected due to suspicious approvals and wallet activity.";
 
-        } else if (riskScore >= 40) {
+    } else {
 
-            analysis =
-                "Moderate risk detected. Review approvals and unknown token activity.";
-
-        } else {
-
-            analysis =
-                "Wallet appears relatively safe. Continue monitoring activity.";
-
-        }
-
-        res.json({
-            answer: analysis
-        });
-
-    } catch {
-
-        res.status(500).json({
-            answer:
-                "Analysis failed"
-        });
+        answer =
+            "Wallet currently shows moderate to low risk.";
 
     }
+
+    res.json({
+        answer
+    });
+
 });
 
 const PORT =
