@@ -8,7 +8,7 @@ Detect risky approvals, suspicious smart-contract interactions, scam exposure, a
 
 ### 🌐 Live Application
 
-🚀 Live Demo: https://collabspace-bet4.vercel.app/
+🚀 Live Demo: https://cryptiz.vercel.app/
 
 ⚙️ Backend API: https://cryptiz-backend.onrender.com/
 
