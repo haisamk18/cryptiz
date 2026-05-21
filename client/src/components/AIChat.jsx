@@ -4,17 +4,15 @@ import axios from "axios";
 export default function AIChat({
     riskScore
 }) {
-
     const [response, setResponse] =
         useState("");
 
     async function askAI() {
-
         try {
 
             const result =
                 await axios.post(
-                    "http://localhost:5000/ai-analysis",
+                    `${import.meta.env.VITE_API_URL}/ai-analysis`,
                     {
                         riskScore
                     }
@@ -29,8 +27,8 @@ export default function AIChat({
             setResponse(
                 "Unable to analyze wallet"
             );
-        }
 
+        }
     }
 
     return (
@@ -47,9 +45,7 @@ export default function AIChat({
                 onClick={askAI}
                 className="bg-blue-600 px-4 py-2 rounded"
             >
-
                 Analyze Wallet
-
             </button>
 
             {
@@ -67,5 +63,4 @@ export default function AIChat({
         </div>
 
     );
-
 }

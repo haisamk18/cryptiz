@@ -15,7 +15,7 @@ export default function Dashboard() {
     async function scanWallet(address) {
         try {
             const response = await axios.post(
-                "http://localhost:5000/scan-wallet",
+                `${import.meta.env.VITE_API_URL}/scan-wallet`,
                 {
                     walletAddress: address
                 }
