@@ -6,7 +6,7 @@ import axios from "axios";
 import RiskCard from "../components/RiskCard";
 import TokenList from "../components/TokenList";
 import ApprovalList from "../components/ApprovalList";
-import AIChat from "../components/AiChat";
+import AIChat from "../components/AIChat";
 
 export default function Dashboard() {
     const [walletAddress, setWalletAddress] = useState("");
